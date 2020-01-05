@@ -250,7 +250,10 @@ Module modNetstat
         While Not (sOut.EndOfStream)
             strLine = sOut.ReadLine.Trim
 
-            If Not (strLine = "") And (strLine.Length > 24) Then
+'modificando la seguente stringa da  If Not (strLine = "") And (strLine.Length > 24) Then a  If Not (strLine = "") then
+'si elimina un possibile errore System.ArgumentOutOfRangeException: Index e length devono fare riferimento a una posizione nella stringa.
+'il programma visualizzera anche i nomi di quelle finestre che superano i 24 caratteri e non mostrera l'errore precedente
+            If Not (strLine = "") Then
                 strParts = Regex.Split(strLine, "\s+")
 
                 Select Case strParts(0).Substring(0, 5).ToLower
@@ -271,7 +274,12 @@ Module modNetstat
                         retInfo.ErrorsTX = Int(strParts(2))
                     Case "unkno"
                         retInfo.Unknown = Int(strParts(2))
+'aggiungo anche case else con exit select e else con exit while in modo da gestire gli errori con un eventuale messaggio dato all'utente.
+			Case else
+			Exit select
                 End Select
+		Else
+		Exit While
             End If
         End While
 
